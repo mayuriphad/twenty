@@ -153,6 +153,36 @@ describe('computeGmailExcludeSearchFilter', () => {
 
       expect(result).toContain('label:projects-active');
     });
+
+    it('quotes label names containing characters Gmail search splits on', () => {
+      const result = computeGmailExcludeSearchFilter(
+        [
+          {
+            externalId: 'Label_1',
+            name: 'Invoices',
+            isSynced: true,
+            parentFolderId: null,
+          },
+          {
+            externalId: 'Label_2',
+            name: 'Clients & Partners',
+            isSynced: true,
+            parentFolderId: null,
+          },
+          {
+            externalId: 'INBOX',
+            name: 'INBOX',
+            isSynced: false,
+            parentFolderId: null,
+          },
+        ],
+        MessageFolderImportPolicy.SELECTED_FOLDERS,
+      );
+
+      expect(result).toContain(
+        '(label:invoices OR label:"clients-&-partners")',
+      );
+    });
   });
 
   describe('ALL_FOLDERS policy', () => {
